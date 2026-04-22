@@ -1,6 +1,6 @@
 # Arquitetura do CloudTool
 
-**Data:** 2026-04-14  
+**Data:** 21/04/2026  
 **Versão:** 1.0.0  
 **Status:** Estável
 
