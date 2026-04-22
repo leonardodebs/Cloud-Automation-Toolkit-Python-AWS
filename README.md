@@ -1,12 +1,26 @@
 # CloudTool - Kit de Automação AWS
 
-[![PyPI](https://img.shields.io/pypi/v/cloudtool)](https://pypi.org/project/cloudtool/)
-[![Python](https://img.shields.io/python/pyversions/cloudtool)](https://pypi.org/project/cloudtool/)
-[![License](https://img.shields.io/pypi/l/cloudtool)](LICENSE)
+<div align="center">
 
-Uma ferramenta CLI abrangente para automatizar tarefas comuns de infraestrutura AWS. Construído com Python, Boto3 e Typer.
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=Streamlit&logoColor=white)
+![Typer](https://img.shields.io/badge/Typer-000000?style=for-the-badge&logo=typer&logoColor=white)
+![Rich](https://img.shields.io/badge/Rich-642CA9?style=for-the-badge&logo=python&logoColor=white)
+![Pytest](https://img.shields.io/badge/pytest-%23C93739.svg?style=for-the-badge&logo=pytest&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)
 
-## Recursos
+</div>
+
+---
+
+## 🏗️ Arquitetura Proposta
+
+![Cloud Automation Toolkit Architecture](docs/architecture.png)
+
+Uma ferramenta CLI abrangente para automatizar tarefas comuns de infraestrutura AWS. Construído com Python, Boto3 e Typer, oferecendo uma experiência premium tanto no terminal quanto na web.
+
+## 🚀 Recursos
 
 ### Gerenciamento EC2
 - Listar instâncias EC2 com filtragem por estado
@@ -29,45 +43,27 @@ Uma ferramenta CLI abrangente para automatizar tarefas comuns de infraestrutura 
 - Listar snapshots
 
 ### Gerenciamento IAM
-- Listar usuários
-- Listar roles
-- Listar políticas
-- Listar grupos
+- Listar usuários, roles, políticas e grupos
 - Listar instance profiles
-- Resumo da conta
+- Resumo de segurança da conta
 
 ### CloudWatch
-- Listar alarmes
-- Listar métricas
-- Listar grupos de logs
-- Obter eventos de logs
+- Monitoramento de alarmes e métricas
+- Acesso a Log Groups e eventos de log
 
 ### ECR (Container Registry)
-- Listar repositórios
-- Listar imagens
-- Obter token de autorização
+- Gerenciamento de repositórios e imagens
+- Geração de tokens de autorização
 
-### Relatórios
-- Relatório de instâncias em execução
-- Relatório de uso de armazenamento
-- Estimativa de custos
+### Relatórios e Dashboard
+- **CLI Reports**: Relatórios de instâncias, armazenamento e custos.
+- **Web Dashboard**: Interface visual rica construída com Streamlit.
 
-### Dashboard Web
-- Interface visual Streamlit
-- Visão geral da infraestrutura
-- Tabelas e métricas interativas
-
-## Instalação
+## 🛠️ Instalação
 
 ### Pré-requisitos
 - Python 3.9+
 - Credenciais AWS configuradas
-
-### Instalar via pip
-
-```bash
-pip install cloudtool
-```
 
 ### Instalar a partir do código-fonte
 
@@ -75,164 +71,84 @@ pip install cloudtool
 git clone https://github.com/leonardodebs/Cloud-Automation-Toolkit-Python-AWS.git
 cd cloudtool
 
+# Instalar dependências e pacote em modo editável
 pip install -r requirements.txt
 pip install -e .
 ```
 
-## Configuração
+## ⚙️ Configuração
 
 ### Credenciais AWS
 
-Configure usando um dos métodos:
+Configure usando o AWS CLI ou variáveis de ambiente:
 
 ```bash
 # AWS CLI (recomendado)
 aws configure
 
-# Variáveis de ambiente
+# Ou via variáveis de ambiente
 export AWS_ACCESS_KEY_ID=sua-chave
 export AWS_SECRET_ACCESS_KEY=sua-chave-secreta
 export AWS_DEFAULT_REGION=us-east-1
-
-# Perfil nomeado
-export AWS_PROFILE=meu-perfil
 ```
 
-## Uso
+## 📖 Uso
 
-### Comandos Principais
+### Interface CLI (Exemplos)
 
 ```bash
-# EC2
-cloudtool ec2 --list
+# Listar instâncias EC2 rodando
 cloudtool ec2 --list --state running
-cloudtool ec2 --start i-1234567890abcdef0
-cloudtool ec2 --stop i-1234567890abcdef0
-cloudtool ec2 --snapshot vol-1234567890abcdef0
-cloudtool ec2 --volumes
 
-# S3
-cloudtool s3 --list
-cloudtool s3 --upload arquivo.txt:meu-bucket
-cloudtool s3 --download meu-bucket:chave:./arquivo.txt
-cloudtool s3 --sync ./dir:meu-bucket
-cloudtool s3 --objects meu-bucket
-cloudtool s3 --clean meu-bucket:30
+# Sincronizar diretório local com S3
+cloudtool s3 --sync ./meu-app:meu-bucket-producao
 
-# RDS
-cloudtool rds --list
-cloudtool rds --start minha-db
-cloudtool rds --stop minha-db
-cloudtool rds --snapshots
+# Iniciar banco de dados RDS
+cloudtool rds --start banco-prod-01
 
-# IAM
-cloudtool iam --users
-cloudtool iam --roles
-cloudtool iam --policies
-cloudtool iam --groups
-cloudtool iam --summary
-
-# CloudWatch
-cloudtool cloudwatch --alarms
-cloudtool cloudwatch --metrics
-cloudtool cloudwatch --logs
-
-# ECR
-cloudtool ecr --list
-cloudtool ecr --images meu-repo
-cloudtool ecr --token
-
-# Relatórios
-cloudtool reports --instances
-cloudtool reports --storage
-cloudtool reports --cost
+# Gerar relatório completo de infraestrutura
 cloudtool reports --full
 ```
 
-### Formato de Saída
+### Dashboard Web
 
-```bash
-# Tabela (padrão)
-cloudtool ec2 --list --output table
-
-# JSON
-cloudtool ec2 --list --output json
-```
-
-### Specifies Região
-
-```bash
-cloudtool ec2 --list --region us-west-2
-```
-
-## Dashboard Web
-
-O CloudTool inclui um dashboard web interativo:
+Para uma visão visual e interativa:
 
 ```bash
 streamlit run web_dashboard/app.py
 ```
 
-Acesse: http://localhost:8501
+## 🧪 Desenvolvimento
 
-## Uso Programático
-
-```python
-from cloudtool.ec2 import EC2Manager
-from cloudtool.s3 import S3Manager
-from cloudtool.rds import RDSManager
-from cloudtool.iam import IAMManager
-from cloudtool.reports import ReportGenerator
-
-# EC2
-ec2 = EC2Manager(region="us-east-1")
-instances = ec2.list_instances()
-
-# S3
-s3 = S3Manager(region="us-east-1")
-buckets = s3.list_buckets()
-
-# RDS
-rds = RDSManager(region="us-east-1")
-databases = rds.list_instances()
-
-# IAM
-iam = IAMManager(region="us-east-1")
-users = iam.list_users()
-
-# Relatórios
-reports = ReportGenerator(region="us-east-1")
-report = reports.generate_running_instances_report()
-```
-
-## Desenvolvimento
-
-### Executar Testes
+### Executar Testes e Qualidade
 
 ```bash
+# Instalar dependências de dev
 pip install -e ".[dev]"
-pytest
+
+# Rodar testes com cobertura
 pytest --cov=cloudtool
-```
 
-### Qualidade de Código
-
-```bash
+# Linting e Type Checking
 flake8 cloudtool/
 mypy cloudtool/
 ```
 
-## Tecnologias
+## 🛠️ Stack Tecnológica
 
-- **boto3** - SDK AWS para Python
-- **typer** - Framework CLI
-- **rich** - Formatação de saída
-- **streamlit** - Dashboard web
+| Tecnologia | Finalidade |
+| :--- | :--- |
+| **Python** | Linguagem Core |
+| **Boto3** | SDK AWS Oficial |
+| **Typer** | Interface de Linha de Comando (CLI) |
+| **Rich** | Formatação e Visualização no Terminal |
+| **Streamlit** | Dashboard Web Interativo |
+| **Pytest** | Framework de Testes |
 
-## Licença
+## 📄 Licença
 
-MIT License - consulte o arquivo [LICENSE](LICENSE)
+Este projeto está sob a licença MIT - consulte o arquivo [LICENSE](LICENSE) para detalhes.
 
-## Autor
+## 👤 Autor
 
-Cloud Engineer - leonardo@cloudengineer.dev
+**Cloud Engineer** - [leonardodebs@gmail.com](mailto:leonardodebs@gmail.com)
