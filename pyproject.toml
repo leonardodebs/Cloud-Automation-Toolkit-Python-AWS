@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cloudtool"
+version = "1.0.0"
+description = "AWS Cloud Automation Toolkit - CLI for managing EC2, S3, and generating infrastructure reports"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "Cloud Engineer", email = "contact@cloudengineer.dev"}
+]
+keywords = ["aws", "cloud", "automation", "ec2", "s3", "devops", "infrastructure"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Systems Administration",
+    "Topic :: Cloud",
+]
+
+dependencies = [
+    "boto3>=1.34.0",
+    "typer>=0.12.0",
+    "rich>=13.7.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.12.0",
+    "flake8>=6.1.0",
+    "mypy>=1.7.0",
+]
+
+[project.scripts]
+cloudtool = "cloudtool.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["cloudtool*"]
+
+[tool.black]
+line-length = 100
+target-version = ["py39", "py310", "py311", "py312"]
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = false
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
