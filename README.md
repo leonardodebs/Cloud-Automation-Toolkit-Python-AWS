@@ -1,4 +1,4 @@
-# CloudTool - Kit de Automação AWS
+# ☁️ CloudTool: AWS Automation Toolkit & Dashboard
 
 <div align="center">
 
@@ -6,149 +6,112 @@
 ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
 ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=Streamlit&logoColor=white)
 ![Typer](https://img.shields.io/badge/Typer-000000?style=for-the-badge&logo=typer&logoColor=white)
-![Rich](https://img.shields.io/badge/Rich-642CA9?style=for-the-badge&logo=python&logoColor=white)
-![Pytest](https://img.shields.io/badge/pytest-%23C93739.svg?style=for-the-badge&logo=pytest&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)
+
+**Uma solução robusta e elegante para orquestração de infraestrutura AWS via CLI e Dashboard Web.**
+
+[Recursos](#-recursos) • [Instalação](#-instalação) • [Uso](#-uso) • [Dashboard](#-dashboard-web) • [Demo](#-modo-demonstração)
 
 </div>
 
 ---
 
-## 🏗️ Arquitetura Proposta
+## 🏗️ Arquitetura do Sistema
 
 ![Cloud Automation Toolkit Architecture](docs/architecture.png)
 
-Uma ferramenta CLI abrangente para automatizar tarefas comuns de infraestrutura AWS. Construído com Python, Boto3 e Typer, oferecendo uma experiência premium tanto no terminal quanto na web.
+O **CloudTool** foi desenvolvido para simplificar o dia a dia de Cloud Engineers e SREs. Ele combina a eficiência de uma interface de linha de comando (CLI) com a clareza visual de um Dashboard moderno, permitindo gerenciar recursos AWS com segurança e agilidade.
 
-## 🚀 Recursos
+## ✨ Recursos Principais
 
-### Gerenciamento EC2
-- Listar instâncias EC2 com filtragem por estado
-- Iniciar/Parar instâncias
-- Criar snapshots EBS
-- Listar volumes EBS
+### 🖥️ Gerenciamento EC2 & EBS
+- Listagem inteligente de instâncias com filtros de estado.
+- Operações de ciclo de vida (Start/Stop) em lote ou individuais.
+- Gestão de snapshots EBS para backups rápidos.
 
-### Gerenciamento S3
-- Listar buckets S3 com metadados
-- Upload de arquivos
-- Download de arquivos
-- Sincronizar diretórios locais com buckets
-- Listar objetos em buckets
-- Limpar objetos antigos (por idade)
+### 🪣 Amazon S3 & Armazenamento
+- Sincronização inteligente de diretórios (Local ↔ Cloud).
+- Upload/Download simplificado de objetos.
+- Políticas de limpeza automática por idade (Retention Policies).
 
-### Gerenciamento RDS
-- Listar instâncias RDS
-- Iniciar/Parar/Reiniciar instâncias
-- Criar snapshots de banco de dados
-- Listar snapshots
+### 🗄️ Database (RDS)
+- Controle total sobre instâncias RDS (Start/Stop/Reboot).
+- Geração de snapshots de banco de dados sob demanda.
 
-### Gerenciamento IAM
-- Listar usuários, roles, políticas e grupos
-- Listar instance profiles
-- Resumo de segurança da conta
+### 👤 Segurança & Governança (IAM)
+- Auditoria de usuários, roles e políticas.
+- Resumo de segurança da conta e perfis de instância.
 
-### CloudWatch
-- Monitoramento de alarmes e métricas
-- Acesso a Log Groups e eventos de log
+### 📈 Monitoramento & Logs (CloudWatch)
+- Visualização de alarmes ativos e métricas críticas.
+- Acesso rápido a Log Groups e streams de eventos.
 
-### ECR (Container Registry)
-- Gerenciamento de repositórios e imagens
-- Geração de tokens de autorização
+### 🐳 Container Registry (ECR)
+- Gestão de repositórios e imagens Docker.
+- Autenticação simplificada para pipelines CI/CD.
 
-### Relatórios e Dashboard
-- **CLI Reports**: Relatórios de instâncias, armazenamento e custos.
-- **Web Dashboard**: Interface visual rica construída com Streamlit.
-
-## 🛠️ Instalação
+## 🚀 Instalação
 
 ### Pré-requisitos
-- Python 3.9+
-- Credenciais AWS configuradas
+- Python 3.9 ou superior.
+- Credenciais AWS configuradas (`~/.aws/credentials`).
 
-### Instalar a partir do código-fonte
-
+### Setup Rápido
 ```bash
+# Clone o repositório
 git clone https://github.com/leonardodebs/Cloud-Automation-Toolkit-Python-AWS.git
-cd cloudtool
+cd Cloud-Automation-Toolkit-Python-AWS
 
-# Instalar dependências e pacote em modo editável
+# Instale as dependências
 pip install -r requirements.txt
+
+# Instale o pacote em modo editável
 pip install -e .
 ```
 
-## ⚙️ Configuração
+## 📖 Como Usar
 
-### Credenciais AWS
-
-Configure usando o AWS CLI ou variáveis de ambiente:
-
-```bash
-# AWS CLI (recomendado)
-aws configure
-
-# Ou via variáveis de ambiente
-export AWS_ACCESS_KEY_ID=sua-chave
-export AWS_SECRET_ACCESS_KEY=sua-chave-secreta
-export AWS_DEFAULT_REGION=us-east-1
-```
-
-## 📖 Uso
-
-### Interface CLI (Exemplos)
+### Interface CLI
+O CloudTool oferece comandos intuitivos e saída visual rica (tabelas e JSON):
 
 ```bash
-# Listar instâncias EC2 rodando
+# Listar instâncias EC2 em execução
 cloudtool ec2 --list --state running
 
 # Sincronizar diretório local com S3
-cloudtool s3 --sync ./meu-app:meu-bucket-producao
+cloudtool s3 --sync ./dist:meu-bucket-prod
 
-# Iniciar banco de dados RDS
-cloudtool rds --start banco-prod-01
-
-# Gerar relatório completo de infraestrutura
+# Gerar relatório completo de custos e recursos
 cloudtool reports --full
 ```
 
-### Dashboard Web
-
-Para uma visão visual e interativa:
+### 📊 Dashboard Web
+Para uma experiência visual completa, utilize o dashboard interativo:
 
 ```bash
 streamlit run web_dashboard/app.py
 ```
 
-## 🧪 Desenvolvimento
-
-### Executar Testes e Qualidade
-
-```bash
-# Instalar dependências de dev
-pip install -e ".[dev]"
-
-# Rodar testes com cobertura
-pytest --cov=cloudtool
-
-# Linting e Type Checking
-flake8 cloudtool/
-mypy cloudtool/
-```
+## 🚀 Modo Demonstração (Novo!)
+Deseja testar a interface ou tirar prints sem conectar a uma conta AWS real? 
+Ative o **Modo Demonstração** diretamente na barra lateral do Dashboard. Ele carregará dados fictícios premium para visualização imediata.
 
 ## 🛠️ Stack Tecnológica
 
-| Tecnologia | Finalidade |
+| Componente | Tecnologia |
 | :--- | :--- |
-| **Python** | Linguagem Core |
-| **Boto3** | SDK AWS Oficial |
-| **Typer** | Interface de Linha de Comando (CLI) |
-| **Rich** | Formatação e Visualização no Terminal |
-| **Streamlit** | Dashboard Web Interativo |
-| **Pytest** | Framework de Testes |
+| **Core** | Python 3.9+ |
+| **AWS SDK** | Boto3 |
+| **CLI Engine** | Typer & Rich |
+| **Frontend** | Streamlit (High-Performance Dashboard) |
+| **Data Ops** | Pandas |
+| **Testes** | Pytest |
 
 ## 📄 Licença
+Este projeto está licenciado sob a MIT License - veja o arquivo [LICENSE](LICENSE) para detalhes.
 
-Este projeto está sob a licença MIT - consulte o arquivo [LICENSE](LICENSE) para detalhes.
-
-## 👤 Autor
-
-**Cloud Engineer** - [leonardodebs@gmail.com](mailto:leonardodebs@gmail.com)
+---
+<p align="center">
+Desenvolvido por <b>Leonardo Debs</b><br>
+<i>Cloud Engineer & Developer</i>
+</p>

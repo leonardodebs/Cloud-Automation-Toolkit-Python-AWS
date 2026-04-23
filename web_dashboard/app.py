@@ -4,15 +4,57 @@ Run: streamlit run web_dashboard/app.py
 """
 import streamlit as st
 import boto3
+import pandas as pd
 from datetime import datetime
-
+try:
+    from web_dashboard.demo_data import get_demo_data
+except ImportError:
+    try:
+        from demo_data import get_demo_data
+    except ImportError:
+        def get_demo_data(): return {"timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
 
 st.set_page_config(
-    page_title="CloudTool Dashboard",
-    page_icon="cloud",
+    page_title="CloudTool Premium Dashboard",
+    page_icon="☁️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
+
+# Custom CSS for a more premium look that works in light and dark mode
+st.markdown("""
+    <style>
+    .stMetric {
+        background-color: rgba(128, 128, 128, 0.1);
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid rgba(128, 128, 128, 0.2);
+        transition: all 0.3s ease;
+    }
+    .stMetric:hover {
+        transform: translateY(-5px);
+        border-color: #58a6ff;
+        background-color: rgba(88, 166, 255, 0.05);
+    }
+    .stDataFrame {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    h1, h2, h3 {
+        color: #58a6ff !important;
+        font-family: 'Inter', sans-serif;
+    }
+    /* Ajuste para o logo e visibilidade */
+    [data-testid="stLogo"] {
+        filter: drop-shadow(0 0 1px rgba(0,0,0,0.5));
+    }
+    @media (prefers-color-scheme: light) {
+        [data-testid="stLogo"] {
+            filter: invert(1) hue-rotate(180deg) brightness(0.2);
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 
 class AWSClient:
@@ -55,8 +97,11 @@ class AWSClient:
 
 
 @st.cache_data(ttl=60)
-def get_aws_data():
-    """Carrega todos os dados da AWS."""
+def get_aws_data(demo_mode=False):
+    """Carrega todos os dados da AWS ou dados de demonstração."""
+    if demo_mode:
+        return get_demo_data()
+
     client = AWSClient()
 
     data = {}
@@ -160,7 +205,7 @@ def get_aws_data():
 
 def sidebar():
     """Sidebar com navegação."""
-    st.logo("https://cdn-icons-png.flaticon.com/512/2966/2966327.png", size="large")
+    st.logo("https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Amazon_Web_Services_Logo.svg/512px-Amazon_Web_Services_Logo.svg.png", size="large")
 
     st.sidebar.title("CloudTool")
     st.sidebar.caption("Dashboard de Infraestrutura AWS")
@@ -183,58 +228,89 @@ def sidebar():
 
     st.sidebar.divider()
 
+    demo_mode = st.sidebar.checkbox("🚀 Modo Demonstração", value=False, help="Mostra dados fictícios para fins de apresentação")
+
     with st.sidebar.expander("Configurações"):
         region = st.selectbox("Região", ["us-east-1", "us-west-2", "sa-east-1"], index=0)
 
-    st.sidebar.caption(f"Atualizado: {get_aws_data()['timestamp']}")
+    st.sidebar.caption(f"Atualizado: {get_aws_data(demo_mode)['timestamp']}")
 
-    return page, region
+    return page, region, demo_mode
 
 
 def overview_page(data):
-    """Página de overview."""
+    """Página de overview expandida."""
     st.title("CloudTool Dashboard")
-    st.caption("Visão geral da sua infraestrutura AWS")
+    st.caption("Visão geral completa da sua infraestrutura AWS")
 
+    # Primeira linha de métricas
     col1, col2, col3, col4 = st.columns(4)
-
     with col1:
         st.metric("EC2 Rodando", len(data["ec2_instances"]))
-
     with col2:
         st.metric("Buckets S3", len(data["s3_buckets"]))
-
     with col3:
         st.metric("Instâncias RDS", len(data["rds_instances"]))
-
     with col4:
         st.metric("Usuários IAM", len(data["iam_users"]))
 
+    # Segunda linha de métricas
+    col5, col6, col7, col8 = st.columns(4)
+    with col5:
+        st.metric("Alarmes CW", len(data["cloudwatch_alarms"]), delta=sum(1 for a in data["cloudwatch_alarms"] if a["state"] == "ALARM"), delta_color="inverse")
+    with col6:
+        st.metric("Repositórios ECR", len(data["ecr_repos"]))
+    with col7:
+        st.metric("Log Groups", len(data["cloudwatch_logs"]))
+    with col8:
+        st.metric("Volumes EBS", len(data["ec2_volumes"]))
+
     st.divider()
 
+    # Linha 1 de Tabelas
     c1, c2 = st.columns(2)
-
     with c1:
-        st.subheader("EC2 em Execução")
+        st.subheader("🖥️ EC2 em Execução")
         if data["ec2_instances"]:
-            st.dataframe(
-                data["ec2_instances"],
-                hide_index=True,
-                use_container_width=True,
-            )
+            st.dataframe(data["ec2_instances"], hide_index=True, use_container_width=True)
         else:
             st.info("Nenhuma instância em execução")
-
     with c2:
-        st.subheader("S3 Buckets")
+        st.subheader("🪣 S3 Buckets")
         if data["s3_buckets"]:
-            st.dataframe(
-                data["s3_buckets"],
-                hide_index=True,
-                use_container_width=True,
-            )
+            st.dataframe(data["s3_buckets"], hide_index=True, use_container_width=True)
         else:
             st.info("Nenhum bucket encontrado")
+
+    # Linha 2 de Tabelas
+    c3, c4 = st.columns(2)
+    with c3:
+        st.subheader("🗄️ Instâncias RDS")
+        if data["rds_instances"]:
+            st.dataframe(data["rds_instances"], hide_index=True, use_container_width=True)
+        else:
+            st.info("Nenhuma instância RDS")
+    with c4:
+        st.subheader("👤 Usuários IAM")
+        if data["iam_users"]:
+            st.dataframe(data["iam_users"], hide_index=True, use_container_width=True)
+        else:
+            st.info("Nenhum usuário encontrado")
+
+    # Linha 3 de Tabelas
+    c5, c6 = st.columns(2)
+    with c5:
+        st.subheader("🔔 CloudWatch Alarmes")
+        if data["cloudwatch_alarms"]:
+            st.dataframe(data["cloudwatch_alarms"], hide_index=True, use_container_width=True)
+        else:
+            st.info("Nenhum alarme encontrado")
+    with c6:
+        st.subheader("🐳 ECR Repositórios")
+        if data["ecr_repos"]:
+            st.dataframe(data["ecr_repos"], hide_index=True, use_container_width=True)
+        else:
+            st.info("Nenhum repositório encontrado")
 
 
 def ec2_page(data):
@@ -375,8 +451,8 @@ def ecr_page(data):
 
 def main():
     """Main app."""
-    page, region = sidebar()
-    data = get_aws_data()
+    page, region, demo_mode = sidebar()
+    data = get_aws_data(demo_mode)
 
     if page == "Overview":
         overview_page(data)
