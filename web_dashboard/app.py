@@ -46,12 +46,7 @@ st.markdown("""
     }
     /* Ajuste para o logo e visibilidade */
     [data-testid="stLogo"] {
-        filter: drop-shadow(0 0 1px rgba(0,0,0,0.5));
-    }
-    @media (prefers-color-scheme: light) {
-        [data-testid="stLogo"] {
-            filter: invert(1) hue-rotate(180deg) brightness(0.2);
-        }
+        filter: drop-shadow(0 0 1px rgba(0,0,0,0.2));
     }
     </style>
     """, unsafe_allow_html=True)
@@ -205,7 +200,7 @@ def get_aws_data(demo_mode=False):
 
 def sidebar():
     """Sidebar com navegação."""
-    st.logo("https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Amazon_Web_Services_Logo.svg/512px-Amazon_Web_Services_Logo.svg.png", size="large")
+    st.logo("https://img.icons8.com/color/512/amazon-web-services.png", size="large")
 
     st.sidebar.title("CloudTool")
     st.sidebar.caption("Dashboard de Infraestrutura AWS")
